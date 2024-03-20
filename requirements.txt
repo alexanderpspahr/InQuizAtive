@@ -1,4 +1,6 @@
-openai python-dotenv tqdm
+openai 
+python-dotenv 
+tqdm
 streamlit
 streamlit-card
 pdfminer.six

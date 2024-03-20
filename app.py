@@ -1,4 +1,3 @@
-%%writefile app.py
 import streamlit as st
 from io import StringIO
 from io import BytesIO

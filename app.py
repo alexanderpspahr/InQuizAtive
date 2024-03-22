@@ -12,6 +12,10 @@ import random
 import pdfminer.high_level as pdm
 import tempfile
 from html.parser import HTMLParser
+import streamlit as st
+
+
+
 
 function = [
 	{
@@ -163,8 +167,18 @@ def get_text_from_pdf(pdf):
   pdm.extract_text_to_fp(pdf, outfp = content)
   return content
 
-
-
+def delete_card():
+  if(len(st.session_state['questions']) < 3):
+    if(len(st.session_state['questions']) < 2):
+        st.session_state['finished'] = "Congrats! You're done with your study session. Generate new questions or upload a new document to keep going!"
+    else:
+      del st.session_state['questions'][st.session_state['idx']]
+      del st.session_state['correct_answers'][st.session_state['idx']]
+      st.session_state['idx'] = 0
+  else:
+    del st.session_state['questions'][st.session_state['idx']]
+    del st.session_state['correct_answers'][st.session_state['idx']]
+    st.session_state['idx'] = random.choice(range(0, len(st.session_state['questions'])))
 
 title = r'''
 $\textsf{
@@ -173,11 +187,6 @@ $\textsf{
 '''
 
 
-  
-    
-
-#Execution of app
-
 #Execution of app
 
 API_KEY = "placeholder"
@@ -185,6 +194,7 @@ API_KEY = st.text_input('Enter your OpenAI key here', type = "password")
 os.environ['OPENAI_API_KEY'] = API_KEY
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
+
 
 st.write(title)
 col1, col2, col3 =  st.columns([1,1,1])
@@ -219,6 +229,7 @@ if file is not None:
   generate_question_button = st.button("Generate Questions [:flag-ai:]", type="primary")
 
   if generate_question_button:
+    st.session_state['finished'] = ''
     st.session_state['generated'] = 'True'
     st.session_state['idx'] = 'not generated'
     #processing the chatgpt input and output
@@ -293,6 +304,12 @@ if file is not None:
         },
       )
       st.session_state['question_or_answer'] = 'question'
+    question_correct_button = st.button("I'm done with this card!", type = 'primary', on_click=delete_card)
+    st.write(st.session_state['finished'])
+    
+      
+
+
 
 
 
